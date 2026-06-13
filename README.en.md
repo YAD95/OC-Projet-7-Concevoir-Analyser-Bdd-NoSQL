@@ -4,119 +4,102 @@
 ![Power BI](https://img.shields.io/badge/Power%20BI-Dashboard-F2C811?style=for-the-badge&logo=powerbi&logoColor=black)
 
 🇬🇧 English | readme en français 👉 [🇫🇷 Français](README.md)
-# 🏠 Real Estate Market Analysis – Laplace Immo Database
 
-Project carried out as part of the **Data Engineer training – OpenClassrooms**.
+# Design and Analyze a NoSQL Database — Project 7
 
-The objective of this project is to design a relational database to centralize and analyze real estate transactions in France, in order to help the **Laplace Immo** agency better understand market dynamics.
-
-The analysis focuses on real estate transactions from the **first half of 2020**.
+> **NosCités Association** • Paris & Lyon • Summer 2024
 
 ---
 
-# 🎯 Project Objectives
+## --- Context ---
 
-The goals of this project are:
+The **NosCités** association monitors short-term rental platforms (Airbnb) to measure their impact on the housing market in Paris and Lyon. Following a total crash of the Parisian rental database, a backup was recovered — the goal is to restore it, analyze it, and build a robust and sustainable architecture.
 
-* structure real estate data in a relational database  
-* clean and transform source data  
-* design a normalized relational schema  
-* load data into a SQLite database  
-* perform real estate market analysis using SQL queries  
+**Data:** 95,885 Paris listings + 9,973 Lyon listings — Airbnb scraping June 2024  
+**Database:** MongoDB (NoSQL) — database `noscites`, collection `listings_paris`
 
 ---
 
-# 🗂️ Data Sources
+## --- Tech Stack ---
 
-The data used comes from two main sources:
-
-**DVF (Property Value Requests - Demandes de Valeurs Foncières)**  
-Contains real estate transactions (transaction date, property value, surface area, property type, number of rooms, etc.).
-
-**Geographical reference dataset**  
-Contains information about regions, departments, municipalities, as well as population data.
-
-These datasets were cleaned and prepared before being integrated into the database.
+| Tool | Usage |
+|---|---|
+| MongoDB + MongoDB Compass | Data storage and exploration |
+| Python / Pandas | CSV data preparation and tagging |
+| Polars | Advanced analytics (Rust engine, high performance) |
+| MongoDB Connector for BI (ODBC) | MongoDB → Power BI connection |
+| Power BI | Dashboard and data visualization |
 
 ---
 
-# 🏗️ Database Modeling
+## --- Repository Content ---
 
-The database was designed following **normalization principles (3NF)**.
+| File | Description |
+|---|---|
+| `presentation.pptx` | Full project presentation support |
+| `presentation.pdf` | PDF version of the presentation |
+| `polars_request.py` | Polars analytics queries script |
+| `tagging_lyon_scripts.py` | Python script for Lyon data preparation |
 
-Main tables:
-
-* `region`  
-* `departement`  
-* `commune`  
-* `vente`  
-
-Each real estate transaction is linked to its municipality, department, and region through **foreign keys**, ensuring data integrity.
+> ⚠️ Raw CSV files (Airbnb data) are not included due to their size.
 
 ---
 
-# 🔧 Data Transformation and Cleaning
+## --- What Was Done ---
 
-Several transformations were applied:
+### Part 1 — Restore & Understand the Data
+- Import of 95,885 documents into MongoDB via MongoDB Compass
+- Description of a document's structure (field types, data categories)
+- Justification of the NoSQL choice over SQL for this type of data
+- First checks: total number of documents, number of available listings
 
-* selection of relevant columns  
-* removal of redundant columns  
-* removal of duplicates in geographical dimensions  
-* conversion of numeric formats  
-* handling of missing values  
-* creation of a **`vente_clean` view**  
+### Part 2 — Analyze the Data
 
-This view notably converts the `date_mutation` column into **ISO format (YYYY-MM-DD)** to facilitate time-based analysis.
+**6 queries performed with MongoDB:**
+1. Number of listings by accommodation type
+2. Top 5 listings with the most reviews
+3. Total number of unique hosts
+4. Number of instantly bookable listings
+5. Hosts with more than 100 listings
+6. Number of superhosts and their proportion
 
----
+**5 queries performed with Polars:**
+1. Average booking rate per month and accommodation type
+2. Median number of reviews for all listings
+3. Median number of reviews by host category (superhost vs non-superhost)
+4. Listing density by Paris neighbourhood
+5. Neighbourhoods with the highest booking rate
 
-# 📊 SQL Analyses
+> Polars was used for these queries because its Rust engine offers better performance on large datasets.
 
-Several SQL queries were developed to analyze the real estate market.
+**MongoDB → Power BI Connection:**  
+Since Power BI only accepts SQL engine, an intermediary was installed: **MongoDB Connector for BI (ODBC)**. This connector translates Power BI's SQL queries into MongoDB queries, enabling NoSQL data import and dashboard creation.
 
-Examples of analyses:
+### Part 3 — Make the Database Sustainable
 
-* total number of apartments sold  
-* number of sales by region  
-* proportion of apartments by number of rooms  
-* ranking of departments by average price per m²  
-* average price per m² for houses in Île-de-France  
-* evolution of the number of sales between Q1 and Q2 2020  
-* municipalities with the highest number of transactions per 1,000 inhabitants  
+**Step 1 — Import Paris + Lyon**  
+Lyon data was tagged with a `city: Lyon` field via a Python script, then imported into the same collection as Paris.
 
-A file containing **sample SQL queries used for the analysis** is available in the repository.
+**Step 2 — Data Replication with ReplicaSet**  
+A 3-node ReplicaSet was set up locally:
+- **PRIMARY** (port 27020): receives all write operations
+- **SECONDARY** (port 27021): replicates data in real time, takes over in case of failure
+- **ARBITER** (port 27022): manages election votes, stores no data
 
----
+**Step 3 — Data Distribution with Sharding**  
+A sharding cluster was set up to separate Paris and Lyon data onto distinct servers. The shard key is the `city` field — each query is routed directly to the right shard without scanning the other city's data.
 
-# 🛠️ Technologies Used
-
-* SQL  
-* SQLite  
-* Relational data modeling  
-* Database normalization  
-* Data analysis  
-
----
-
-# 📂 Repository Content
-
-example_sql_queries.sql → sample SQL queries used for analysis  
-data_dictionary.xlsx → data dictionary  
-project_presentation.pptx → project presentation  
-
----
-
-# 🔒 Backup and GDPR Compliance
-
-For this proof of concept, the database is stored locally using **SQLite** to ensure reproducibility.
-
-Only the variables necessary for analysis were retained, in accordance with **GDPR data minimization principles**.
-
-Results are presented in an **aggregated format** (by region, department, or municipality).
+- **Config Server** (port 27030): stores the cluster map
+- **Mongos** (port 27050): single query router
+- **shardRS1** (port 27040): Paris data
+- **shardRS2** (port 27041): Lyon data
 
 ---
 
-# 👨‍💻 Author
+📎 *For query details, results and screenshots, please refer to the presentation.*
 
+---
+
+## --- 👤 Author ---
 YAD95  
-OpenClassrooms Project – Data Engineer
+Project completed as part of the **Data Engineer** training — OpenClassrooms
