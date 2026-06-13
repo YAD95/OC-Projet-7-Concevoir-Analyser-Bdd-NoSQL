@@ -1,4 +1,4 @@
-# 🗄️ Concevez et analysez une base de données NoSQL — Projet 7
+#  Concevez et analysez une base de données NoSQL — Projet 7
 
 <div align="center">
 
@@ -15,7 +15,7 @@
 
 ---
 
-## 📋 Contexte du projet
+##  Contexte du projet
 
 L'association **NosCités** surveille les plateformes de location courte durée (Airbnb, etc.) pour mesurer leur impact sur l'offre de logements à Paris et Lyon.
 
@@ -25,7 +25,7 @@ Suite à un **crash total** de la base de données des locations parisiennes dè
 
 ---
 
-## 🛠️ Stack technique
+##  Stack technique
 
 | Outil | Rôle |
 |---|---|
@@ -40,7 +40,7 @@ Suite à un **crash total** de la base de données des locations parisiennes dè
 
 ---
 
-## 📁 Données utilisées
+##  Données utilisées
 
 | Fichier | Source | Volume |
 |---|---|---|
@@ -51,7 +51,7 @@ Suite à un **crash total** de la base de données des locations parisiennes dè
 
 ---
 
-## 🗂️ Structure d'un document MongoDB
+##  Structure d'un document MongoDB
 
 Chaque annonce est stockée sous forme de document JSON avec les catégories de champs suivantes :
 
@@ -81,7 +81,7 @@ Chaque annonce est stockée sous forme de document JSON avec les catégories de 
 
 ---
 
-## 🔍 Partie 1 — Restaurer & comprendre les données
+##  Partie 1 — Restaurer & comprendre les données
 
 ### Import des données
 
@@ -105,7 +105,7 @@ db.listings_paris.countDocuments({ has_availability: true })
 
 ---
 
-## 🔎 Partie 2 — Analyser les données
+##  Partie 2 — Analyser les données
 
 ### Requêtes MongoDB (NoSQL)
 
@@ -125,7 +125,7 @@ db.listings_paris.aggregate([
 | Hotel room | 776 | 0,8% |
 | Shared room | 401 | 0,4% |
 
-> 📌 Paris est dominée à **89,4%** par des logements entiers — c'est le cœur de la problématique de NosCités : ces appartements sont retirés du marché locatif classique.
+>  Paris est dominée à **89,4%** par des logements entiers — c'est le cœur de la problématique de NosCités : ces appartements sont retirés du marché locatif classique.
 
 ---
 
@@ -169,7 +169,7 @@ db.listings_paris.countDocuments({ instant_bookable: true })
 // → 23,04%
 ```
 
-> 📌 Seulement **23,04%** des annonces sont en réservation instantanée. La majorité des hôtes parisiens préfèrent valider manuellement chaque réservation.
+>  Seulement **23,04%** des annonces sont en réservation instantanée. La majorité des hôtes parisiens préfèrent valider manuellement chaque réservation.
 
 ---
 
@@ -197,7 +197,7 @@ db.listings_paris.aggregate([
 // → 0,03%
 ```
 
-> 📌 **24 hôtes** sur 71 979 possèdent plus de 100 annonces — une infime minorité (0,03%) mais très impactante sur le marché immobilier. Ce sont souvent des sociétés de gestion locative.
+>  **24 hôtes** sur 71 979 possèdent plus de 100 annonces — une infime minorité (0,03%) mais très impactante sur le marché immobilier. Ce sont souvent des sociétés de gestion locative.
 
 ---
 
@@ -213,7 +213,7 @@ db.listings_paris.distinct("host_id", { host_is_superhost: true }).length
 // → 13,93%
 ```
 
-> 📌 Seulement **13,93%** des hôtes ont le label "super hôte" — il reste sélectif et difficile à obtenir.
+>  Seulement **13,93%** des hôtes ont le label "super hôte" — il reste sélectif et difficile à obtenir.
 
 ---
 
@@ -253,7 +253,7 @@ req2 = df.select(
 # → Médiane : 3 avis
 ```
 
-> 📌 La médiane de **3 avis** révèle une distribution très asymétrique : la majorité des annonces sont peu actives, tandis qu'une minorité concentre des centaines d'avis.
+>  La médiane de **3 avis** révèle une distribution très asymétrique : la majorité des annonces sont peu actives, tandis qu'une minorité concentre des centaines d'avis.
 
 ---
 
@@ -272,7 +272,7 @@ req3 = (
 | Super hôte ✅ | 24 avis |
 | Non super hôte ❌ | 2 avis |
 
-> 📌 Les super hôtes ont **12 fois plus** d'avis en médiane — le label est directement corrélé à une activité intense.
+>  Les super hôtes ont **12 fois plus** d'avis en médiane — le label est directement corrélé à une activité intense.
 
 ---
 
@@ -336,7 +336,7 @@ Power BI n'accepte nativement que le moteur SQL. Pour connecter MongoDB (NoSQL),
 
 ---
 
-## 🔒 Partie 3 — Pérenniser la base de données
+##  Partie 3 — Pérenniser la base de données
 
 ### Étape 1 — Import Paris + Lyon dans une seule collection
 
@@ -502,23 +502,8 @@ Le champ `city` est la clé de sharding naturelle car les données sont partitio
 
 ---
 
-## 📦 Livrable
 
-Le livrable du projet est un support de présentation PowerPoint nommé selon la convention :
+## 👤 Auteur YAD95
 
-```
-Nom_Prenom_support_mmaaaa.pptx
-```
+Projet réalisé dans le cadre de la formation **Data Engineer** — OpenClassrooms  
 
-Déposé dans un dossier ZIP nommé :
-
-```
-Concevez_et_analysez_une_base_de_donnees_NoSQL_nom_prenom.zip
-```
-
----
-
-## 👤 Auteur
-
-Projet réalisé dans le cadre de la formation **Data Analyst** — OpenClassrooms  
-Parcours : *Concevez et analysez une base de données NoSQL*
