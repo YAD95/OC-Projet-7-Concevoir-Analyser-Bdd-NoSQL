@@ -3,6 +3,7 @@
 ![Polars](https://img.shields.io/badge/Polars-DataFrame-CD792C?style=for-the-badge&logo=polars&logoColor=white)
 ![Power BI](https://img.shields.io/badge/Power%20BI-Dashboard-F2C811?style=for-the-badge&logo=powerbi&logoColor=black)
 
+🇫🇷 Français | readme in english 👉 [🇬🇧 English](README.en.md)
 #  Concevez et analysez une base de données NoSQL — Projet 7
 
 > **Association NosCités** • Paris & Lyon • Été 2024
